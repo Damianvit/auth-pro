@@ -6,9 +6,10 @@ import clientPromise from "./lib/db";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getUserFromDb, getUserByEmail } from "@/data/user";
+import { Adapter } from "next-auth/adapters";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-    adapter: MongoDBAdapter(clientPromise),
+    adapter: MongoDBAdapter(clientPromise) as Adapter,
 
     providers: [
         GitHub,
@@ -45,12 +46,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
         }),
     ],
-    callbacks: {
-        async redirect({ url, baseUrl }) {
-            // If callbackUrl is set, return it
-            if (url.startsWith(baseUrl)) return url;
-            // Otherwise, return home page
-            return baseUrl;
-        },
-    },
 });
