@@ -5,12 +5,14 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "./lib/db";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { getUserFromDb, getUserByEmail } from "@/data/user";
-import { Adapter } from "next-auth/adapters";
+import { getUserFromDb, getUserByEmail } from "@/data/userSupabase";
+import { SupabaseAdapter } from "@auth/supabase-adapter";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-    adapter: MongoDBAdapter(clientPromise) as Adapter,
-
+    adapter: SupabaseAdapter({
+        url: process.env.SUPABASE_URL,
+        secret: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    }),
     providers: [
         GitHub,
         Google,
@@ -19,8 +21,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             // You can specify which fields should be submitted, by adding keys to the `credentials` object.
             // e.g. domain, username, password, 2FA token, etc.
             credentials: {
-                email: {},
-                password: {},
+                email: { label: "Email" },
+                password: { label: "Password", type: "password" },
             },
             authorize: async (credentials) => {
                 let user = null;

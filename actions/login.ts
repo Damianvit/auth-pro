@@ -25,6 +25,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
                 case "CredentialsSignin":
                     return { error: "Invalid credentials!" };
                 default:
+                    console.log("ERROR", error);
                     return { error: "Something went wrong!" };
             }
         }

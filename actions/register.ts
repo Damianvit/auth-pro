@@ -2,8 +2,8 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { RegisterSchema } from "@/schemas";
-import clientPromise from "@/lib/db"; // Ensure this matches your clientPromise path
-import { getUserByEmail } from "@/data/user";
+import supabaseClient from "@/lib/dbS"; // Ensure this matches your clientPromise path
+import { getUserByEmail } from "@/data/userSupabase";
 
 const register = async (values: z.infer<typeof RegisterSchema>) => {
     const validatedFields = RegisterSchema.safeParse(values);
@@ -18,16 +18,22 @@ const register = async (values: z.infer<typeof RegisterSchema>) => {
         return { error: "Email already in use!" };
     }
 
-    const client = await clientPromise; // Await the MongoDB client promise
-    const db = client.db(); // Connect to your MongoDB database
-    const usersCollection = db.collection("users");
-
-    await usersCollection.insertOne({
-        name,
-        email,
-        password: hashedPassword,
-    });
-
+    try {
+        const { data: newUser, error } = await supabaseClient
+            .from("next_auth.users")
+            .insert([
+                {
+                    email,
+                    password: hashedPassword,
+                },
+            ])
+            .single();
+        if (error) {
+            throw error;
+        }
+    } catch {
+        return null;
+    }
     // Optionally, send a verification token email here
 
     return { success: "User created!" };
