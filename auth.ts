@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 import { getUserFromDb, getUserByEmail } from "@/data/user";
 import { Adapter } from "next-auth/adapters";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient() as Adapter;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
