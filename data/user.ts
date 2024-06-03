@@ -1,40 +1,28 @@
-import clientPromise from "@/lib/db";
-import { MongoClient } from "mongodb";
+// user.ts
 
-export const getUserByEmail = async (email: string) => {
+import { PrismaClient, User } from "@prisma/client";
+import prisma from "@/lib/db";
+
+export const getUserByEmail = async (email: string): Promise<User | null> => {
     try {
-        const client = await clientPromise;
-        const db = client.db();
-        const user = await db.collection("users").findOne({ email });
-
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
         return user;
-    } catch {
+    } catch (error) {
+        console.error(error);
         return null;
     }
 };
 
-export const getUserById = async (id: string) => {
+export const getUserById = async (id: string): Promise<User | null> => {
     try {
-        const client = await clientPromise;
-        const db = client.db();
-        const user = await db
-            .collection("users")
-            .findOne({ _id: new ObjectId(id) });
-
+        const user = await prisma.user.findUnique({
+            where: { id },
+        });
         return user;
-    } catch {
-        return null;
-    }
-};
-export const getUserFromDb = async (email: string, pwHash: string) => {
-    try {
-        const client = await clientPromise;
-        const db = client.db();
-        const user = await db
-            .collection("users")
-            .findOne({ email, password: pwHash });
-        return user;
-    } catch {
+    } catch (error) {
+        console.error(error);
         return null;
     }
 };
