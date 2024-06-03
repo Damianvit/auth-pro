@@ -25,18 +25,3 @@ export const getUserById = async (id: string) => {
         return null;
     }
 };
-
-export const getUserFromDb = async (email: string, pwHash: string) => {
-    try {
-        const user = await prisma.user.findUnique({
-            where: {
-                email,
-                password: pwHash,
-            },
-        });
-        return user;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-};
