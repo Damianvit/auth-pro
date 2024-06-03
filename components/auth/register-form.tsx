@@ -19,113 +19,17 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { CardWrapper } from "@/components/auth/card-wrapper";
+import { Social } from "@/components/auth/social";
 
 export const RegisterForm = () => {
-    const [error, setError] = useState<string>("");
-    const [success, setSuccess] = useState<string>("");
-    const form = useForm<z.infer<typeof RegisterSchema>>({
-        resolver: zodResolver(RegisterSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-            name: "",
-        },
-    });
-
-    const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
-        setError("");
-        setSuccess("");
-        try {
-            const response = await fetch("/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(values),
-            });
-            const data = await response.json();
-            if (data.error) {
-                setError(data.error);
-            } else {
-                setSuccess(data.success);
-            }
-        } catch (error) {
-            setError("An unexpected error occurred.");
-        }
-    };
-
     return (
         <CardWrapper
-            headerLabel="Create an Account"
+            headerLabel="Signup with any of these accounts"
             backButtonLabel="Already have an account"
             backButtonHref="/auth/login"
             showSocial
         >
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
-                >
-                    <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            placeholder="vitus.damain@example.com"
-                                            type="email"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            placeholder="******"
-                                            type="password"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            placeholder="Your Name"
-                                            type="text"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <FormError message={error} />
-                    <FormSuccess message={success} />
-                    <Button type="submit" className="w-full">
-                        Register
-                    </Button>
-                </form>
-            </Form>
+            <Social />
         </CardWrapper>
     );
 };
