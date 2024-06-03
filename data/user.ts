@@ -20,6 +20,7 @@ export const getUserById = async (id: string): Promise<User | null> => {
         const user = await prisma.user.findUnique({
             where: { id },
         });
+        console.log(user);
         return user;
     } catch (error) {
         console.error(error);
